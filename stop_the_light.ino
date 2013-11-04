@@ -1,23 +1,14 @@
-// array for the pins connected to the LEDs
-int ledPins[] = {2, 3, 4, 5, 6, 7, 8, 9, 10};
 
-// red LED pin number (not the index in the array, the actual pin's number)
-int redLedPin = 6;
+int ledPins[] = {2, 3, 4, 5, 6, 7, 8, 9, 10}; // array for the pins connected to the LEDs
+int redLedPin = 6; // red LED pin number (not the index in the array, the actual pin's number)
+int delayTime = 1000; // milliseconds to wait before moving to next LED
+int delayDecrement = 200; // milliseconds to decrease delayTime by per level
+int buttonPin = 11; // the button input pin
+int lightPosition = 0; // index of the current LED
+int rowLength = sizeof(ledPins) / sizeof(int); // number of elements in ledPins
+long millisElapsed = 0; // stores milliseconds since program began
+int allowAdvance = 1; // controlled in loop() body to advacne only one level per iteration in the loop() body
 
-// milliseconds to wait before moving to next LED
-int delayTime = 1000;
-
-// the button input pin
-int buttonPin = 11;
-
-// index of the current LED
-int lightPosition = 0;
-
-// number of elements in ledPins
-int rowLength = sizeof(ledPins) / sizeof(int);
-
-// stores milliseconds since program began
-long millisElapsed = 0;
 
 void setup() {
   Serial.begin(9600);
@@ -33,14 +24,17 @@ void setup() {
 
 void loop() {
   
-  if (millis() - millisElapsed > delayTime) {
-    millisElapsed = millis();
-    
-    nextLight();
+  if (digitalRead(buttonPin) == HIGH && ledPins[lightPosition] == 6 && allowAdvance == 1) {
+      Serial.println("button pushed while red");
+      nextLevel();
+      allowAdvance = 0; // can no longer advance to next level, until the next light gets lit
   }
   
-  if (digitalRead(buttonPin) == HIGH && ledPins[lightPosition] == 6) {
-    Serial.println("button pushed while red");
+  // move on to the next light if [delayTime] milliseconds have elasped
+  if (millis() - millisElapsed > delayTime) {
+    millisElapsed = millis(); // set
+    nextLight();
+    allowAdvance = 1; // now allowed to advance to next level
   }
 }
 
@@ -56,4 +50,13 @@ void nextLight() {
   digitalWrite(ledPins[lightPosition], HIGH);
   
   Serial.println(ledPins[lightPosition]);
+}
+
+/*
+Advance to the next level by decreasing delayTime
+*/
+void nextLevel() {
+  delayTime -= delayDecrement;
+  Serial.print("delayTime: ");
+  Serial.println(delayTime);
 }
