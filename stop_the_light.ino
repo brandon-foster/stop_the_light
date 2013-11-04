@@ -1,8 +1,11 @@
 // array for the pins connected to the LEDs
 int ledPins[] = {2, 3, 4, 5, 6, 7, 8, 9, 10};
 
+// red LED pin number (not the index in the array, the actual pin's number)
+int redLedPin = 6;
+
 // milliseconds to wait before moving to next LED
-int delayTime = 100;
+int delayTime = 1000;
 
 // the button input pin
 int buttonPin = 11;
@@ -13,7 +16,12 @@ int lightPosition = 0;
 // number of elements in ledPins
 int rowLength = sizeof(ledPins) / sizeof(int);
 
+// stores milliseconds since program began
+long millisElapsed = 0;
+
 void setup() {
+  Serial.begin(9600);
+  
   // set all the LED pins to OUTPUT
   for (int i = 0; i < rowLength; i++) {
     pinMode(ledPins[i], OUTPUT);
@@ -24,8 +32,16 @@ void setup() {
 }
 
 void loop() {
-  next();
-  delay(delayTime);
+  
+  if (millis() - millisElapsed > delayTime) {
+    millisElapsed = millis();
+    
+    next();
+  }
+  
+  if (digitalRead(buttonPin) == HIGH && ledPins[lightPosition] == 6) {
+    Serial.println("button pushed while red");
+  }
 }
 
 /*
@@ -38,4 +54,6 @@ void next() {
   // turn on the next LED
   lightPosition = (lightPosition + 1) % (rowLength); // circular indexing
   digitalWrite(ledPins[lightPosition], HIGH);
+  
+  Serial.println(ledPins[lightPosition]);
 }
