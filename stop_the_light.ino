@@ -36,7 +36,7 @@ void loop() {
   if (millis() - millisElapsed > delayTime) {
     millisElapsed = millis();
     
-    next();
+    nextLight();
   }
   
   if (digitalRead(buttonPin) == HIGH && ledPins[lightPosition] == 6) {
@@ -47,7 +47,7 @@ void loop() {
 /*
 Turn off current light then turn on next light
 */
-void next() {
+void nextLight() {
   // turn off the current LED
   digitalWrite(ledPins[lightPosition], LOW);
   
