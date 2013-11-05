@@ -4,7 +4,8 @@ int redLedPin = 6; // red LED pin number (not the index in the array, the actual
 int delayTime = 1000; // milliseconds to wait before moving to next LED
 int delayDecrement = 200; // milliseconds to decrease delayTime by per level
 int buttonPin = 11; // the button input pin
-int lightPosition = 0; // index of the current LED
+int lightPosition = 9; // index of the current LED, start at 9 for first iteration to light
+                       // the 0th LED -- see nextLight() function
 int rowLength = sizeof(ledPins) / sizeof(int); // number of elements in ledPins
 long millisElapsed = 0; // stores milliseconds since program began
 int allowAdvance = 1; // controlled in loop() body to advacne only one level per iteration in the loop() body
@@ -56,7 +57,29 @@ void nextLight() {
 Advance to the next level by decreasing delayTime
 */
 void nextLevel() {
-  delayTime -= delayDecrement;
+  flashAll();
+  if (delayTime > 200) {
+    delayTime -= delayDecrement;
+  }
+  lightPosition = 9;
   Serial.print("delayTime: ");
   Serial.println(delayTime);
+}
+
+/*
+Turn all LEDs on and then off, to indicate the completion of the previous level
+*/
+void flashAll() {
+  // turn all LEDs on
+  for (int i = 0; i < rowLength; i++) {
+    digitalWrite(ledPins[i], HIGH);
+  }
+  
+  delay(500);
+  
+  // turn all LEDs off
+  for (int i = 0; i < rowLength; i++) {
+    digitalWrite(ledPins[i], LOW);
+  }
+  
 }
