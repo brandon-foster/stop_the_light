@@ -11,3 +11,4 @@ First Arduino project
 ### To do
 * randomize LED queuing
 * convert program to use  RGB LEDs
+* create user interface for game play
