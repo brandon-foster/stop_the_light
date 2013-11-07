@@ -25,7 +25,8 @@ void setup() {
 
 void loop() {
   
-  if (digitalRead(buttonPin) == HIGH && ledPins[lightPosition] == 6 && allowAdvance == 1) {
+  // advance to the next level if the button is pressed on the red LED
+  if (digitalRead(buttonPin) == HIGH && ledPins[lightPosition] == redLedPin && allowAdvance == 1) {
       Serial.println("button pushed while red");
       nextLevel();
       allowAdvance = 0; // can no longer advance to next level, until the next light gets lit
