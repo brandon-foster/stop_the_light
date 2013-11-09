@@ -90,9 +90,7 @@ void setup() {
 
 //Game Loop -------------------------------------------------------------------------------
 void loop() {
-  
-  while (button1Pushed() == false) {
-  
+  /////////////////////////////////////////////////////////
   // Randomly Light an LED -----------------------------------------------------------------
   int randColor = random(0, 6);
   
@@ -116,7 +114,7 @@ void loop() {
   // Light the LED according to the vector mutiplication of color .* led
   for (int i = 0; i < 3; i ++) {
     if (light[i] > 0)
-      digitalWrite(light[i], HIGH);
+        digitalWrite(light[i], HIGH);
   }
   
   //Sets the delay Timer for the light to be on
@@ -128,7 +126,8 @@ void loop() {
       digitalWrite(light[i], LOW);
   }
   
-}
+  /////////////////////////////////////////
+    
 
   // If when button #1 is pushed, the light is red, the player scores a win
   // Otherwise the player has lost the current round.
