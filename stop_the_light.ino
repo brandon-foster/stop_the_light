@@ -10,6 +10,8 @@ int rowLength = sizeof(ledPins) / sizeof(int); // number of elements in ledPins
 long millisElapsed = 0; // stores milliseconds since program began
 int allowAdvance = 1; // controlled in loop() body to advacne only one level per iteration in the loop() body
 int score = 0; // the score of the user
+int level = 1; // the level of the user
+int attemptsRemaining = 5;
 
 
 void setup() {
@@ -23,17 +25,28 @@ void setup() {
   // set the button pin to INPUT
   pinMode(buttonPin, INPUT);
   
-  
   newGame();
 }
 
 void loop() {
   
   // advance to the next level if the button is pressed on the red LED
-  if (digitalRead(buttonPin) == HIGH && ledPins[lightPosition] == redLedPin && allowAdvance == 1) {
+  // else, handle number of attempts remaining
+  if (digitalRead(buttonPin) == HIGH && allowAdvance == 1) {
+    allowAdvance = 0; // can no longer advance to next level, until the next light gets lit
+    if (ledPins[lightPosition] == redLedPin) {
       Serial.println("button pushed while red");
       nextLevel();
-      allowAdvance = 0; // can no longer advance to next level, until the next light gets lit
+    } else {
+      // button was hit on a non-red LED
+      attemptsRemaining--;
+      Serial.print("Attempts remaining: ");
+      Serial.println(attemptsRemaining);
+      // end game if all attempts are exhausted
+      if (attemptsRemaining <= 0) {
+        gameOver();
+      }
+    }
   }
   
   // move on to the next light if [delayTime] milliseconds have elasped
@@ -72,6 +85,7 @@ void nextLight() {
 Advance to the next level by decreasing delayTime
 */
 void nextLevel() {
+  level++;
   score += 50;
   flashAll();
   if (delayTime > 200) {
@@ -80,6 +94,8 @@ void nextLevel() {
   lightPosition = 9;
   Serial.print("delayTime: ");
   Serial.println(delayTime);
+  Serial.print("Congratulations! Level: ");
+  Serial.println(level);
   Serial.print("Score: ");
   Serial.println(score);
 }
@@ -110,8 +126,26 @@ void newGame() {
   Serial.println("New Game:");
   score = 0;
   delayTime = 1000;
+  level = 0;
+  attemptsRemaining = 5;
   
   // lighting entire row twice indicates a new game
   flashAll();
   flashAll();
+}
+
+/*
+Turn on and off the LED that was stopped for the number of levels
+the user achieved, then start a new game
+*/
+void gameOver() {
+  
+  for (int i = 0; i < level; i++) {
+    digitalWrite(ledPins[lightPosition], HIGH);
+    delay(100);
+    digitalWrite(ledPins[lightPosition], LOW);
+    delay(100);
+  }
+  
+  newGame();
 }
