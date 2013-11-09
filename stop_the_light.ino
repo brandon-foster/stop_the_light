@@ -132,20 +132,39 @@ void newGame() {
   // lighting entire row twice indicates a new game
   flashAll();
   flashAll();
+  flashAll();
 }
 
 /*
-Turn on and off the LED that was stopped for the number of levels
-the user achieved, then start a new game
+Perform a game over light sequence, then start a new game
 */
 void gameOver() {
   
-  for (int i = 0; i < level; i++) {
-    digitalWrite(ledPins[lightPosition], HIGH);
-    delay(100);
-    digitalWrite(ledPins[lightPosition], LOW);
-    delay(100);
-  }
-  
+  gameOverSequence();  
   newGame();
+}
+
+
+void gameOverSequence() {
+  if (lightPosition > 4) {
+    // turn on each light up to the LED that the game was ended on
+    for (int i = 0; i < lightPosition; i++) {
+      digitalWrite(ledPins[i], HIGH);
+      delay(500);
+    }
+    for (int i = 0; i < lightPosition; i++) {
+      digitalWrite(ledPins[i], LOW);
+      delay(500);
+    }
+  } else {
+    for (int i = rowLength - 1; i >= lightPosition; i--) {
+      digitalWrite(ledPins[i], HIGH);
+      delay(500);
+    }
+    for (int i = rowLength - 1; i >= lightPosition; i--) {
+      digitalWrite(ledPins[i], LOW);
+      delay(500);
+    }
+  }
+  delay(1000); // wait one second until new game begins
 }
