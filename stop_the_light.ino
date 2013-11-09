@@ -1,7 +1,7 @@
 
 int ledPins[] = {2, 3, 4, 5, 6, 7, 8, 9, 10}; // array for the pins connected to the LEDs
 int redLedPin = 6; // red LED pin number (not the index in the array, the actual pin's number)
-int delayTime = 1000; // milliseconds to wait before moving to next LED
+int delayTime = 10; // milliseconds to wait before moving to next LED
 int delayDecrement = 200; // milliseconds to decrease delayTime by per level
 int buttonPin = 11; // the button input pin
 int lightPosition = 9; // index of the current LED, start at 9 for first iteration to light
@@ -48,7 +48,8 @@ void nextLight() {
   digitalWrite(ledPins[lightPosition], LOW);
   
   // turn on the next LED
-  lightPosition = (lightPosition + 1) % (rowLength); // circular indexing
+  //lightPosition = (lightPosition + 1) % (rowLength); // circular indexing
+  lightPosition = random(0, 7);
   digitalWrite(ledPins[lightPosition], HIGH);
   
   Serial.println(ledPins[lightPosition]);
