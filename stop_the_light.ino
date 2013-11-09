@@ -2,13 +2,14 @@
 int ledPins[] = {2, 3, 4, 5, 6, 7, 8, 9, 10}; // array for the pins connected to the LEDs
 int redLedPin = 6; // red LED pin number (not the index in the array, the actual pin's number)
 int delayTime = 1000; // milliseconds to wait before moving to next LED
-int delayDecrement = 200; // milliseconds to decrease delayTime by per level
+int delayDecrement = 100; // milliseconds to decrease delayTime by per level
 int buttonPin = 11; // the button input pin
 int lightPosition = 9; // index of the current LED, start at 9 for first iteration to light
                        // the 0th LED -- see nextLight() function
 int rowLength = sizeof(ledPins) / sizeof(int); // number of elements in ledPins
 long millisElapsed = 0; // stores milliseconds since program began
 int allowAdvance = 1; // controlled in loop() body to advacne only one level per iteration in the loop() body
+int score = 0; // the score of the user
 
 
 void setup() {
@@ -21,6 +22,9 @@ void setup() {
   
   // set the button pin to INPUT
   pinMode(buttonPin, INPUT);
+  
+  
+  newGame();
 }
 
 void loop() {
@@ -48,7 +52,17 @@ void nextLight() {
   digitalWrite(ledPins[lightPosition], LOW);
   
   // turn on the next LED
-  lightPosition = (lightPosition + 1) % (rowLength); // circular indexing
+  //lightPosition = (lightPosition + 1) % (rowLength); // circular indexing
+  //lightPosition = random(0, 9);
+ 
+  // set light the red light at least 15 percent of the time
+  int randomNumber = random(0, 100); // generate a random number from 0 up to and including 99
+  if (randomNumber < 15) {
+    lightPosition = 4; // 4 is the index of pin 6 in ledPins[]
+  } else {
+    lightPosition = random(0, 9);
+  };
+  
   digitalWrite(ledPins[lightPosition], HIGH);
   
   Serial.println(ledPins[lightPosition]);
@@ -58,6 +72,7 @@ void nextLight() {
 Advance to the next level by decreasing delayTime
 */
 void nextLevel() {
+  score += 50;
   flashAll();
   if (delayTime > 200) {
     delayTime -= delayDecrement;
@@ -65,6 +80,8 @@ void nextLevel() {
   lightPosition = 9;
   Serial.print("delayTime: ");
   Serial.println(delayTime);
+  Serial.print("Score: ");
+  Serial.println(score);
 }
 
 /*
@@ -83,4 +100,18 @@ void flashAll() {
     digitalWrite(ledPins[i], LOW);
   }
   
+  delay(500);
+}
+
+/*
+New Game: reset score and delayTime
+*/
+void newGame() {
+  Serial.println("New Game:");
+  score = 0;
+  delayTime = 1000;
+  
+  // lighting entire row twice indicates a new game
+  flashAll();
+  flashAll();
 }
